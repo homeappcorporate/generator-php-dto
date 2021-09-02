@@ -5,7 +5,7 @@ namespace Homeapp\OpenapiGenerator\OpenApi;
 use Nette\PhpGenerator\Type;
 use Psr\Log\LoggerInterface;
 
-class TypeMapper
+final class TypeMapper
 {
     private LoggerInterface $logger;
 

@@ -2,6 +2,8 @@
 
 namespace Homeapp\OpenapiGenerator\Command;
 
+use Homeapp\OpenapiGenerator\Generator\ClassFactoryGenerator;
+use Homeapp\OpenapiGenerator\Generator\ClassGenerator;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
@@ -16,18 +18,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateDTO extends Command
+final class CreateDTO extends Command
 {
-    private Printer $printer;
-    private LoggerInterface $logger;
     private TypeMapper $typeMapper;
+    private ClassFactoryGenerator $classFactoryGenerator;
 
-    public function __construct(string $name = null, Printer $printer, LoggerInterface $logger, TypeMapper $typeMapper)
+    public function __construct(string $name = null, Printer $printer, LoggerInterface $logger, TypeMapper $typeMapper, ClassFactoryGenerator $classFactoryGenerator)
     {
         parent::__construct($name);
         $this->printer = $printer;
         $this->logger = $logger;
         $this->typeMapper = $typeMapper;
+        $this->classFactoryGenerator = $classFactoryGenerator;
     }
 
     // the name of the command (the part after "bin/console")
@@ -47,6 +49,7 @@ class CreateDTO extends Command
         $path =  $input->getArgument('path-json');
         $json = json_decode(file_get_contents($path), true);
         $outputDirectory = $input->getArgument('path-out');
+        $classGenerator = $this->classFactoryGenerator->build($outputDirectory);
         $globalNamespace = $input->getOption('namespace');
 
         $responses = $json['components']['responses'];
@@ -54,7 +57,7 @@ class CreateDTO extends Command
         $subNamespace = 'Responses';
         foreach ($classesFromResponses as $class) {
             $class->setFinal();
-            $this->generateClassFile($class, sprintf('%s%s', $globalNamespace, $subNamespace), $outputDirectory);
+            $classGenerator->generateClassFile($class, sprintf('%s%s', $globalNamespace, $subNamespace));
         }
         return Command::SUCCESS;
     }
@@ -98,6 +101,7 @@ class CreateDTO extends Command
             $requiredParameters = [];
             foreach ($properties as $propertyName => $propertyStructure) {
                 if (array_key_exists('$ref', $propertyStructure)) {
+
                     // TODO implement
                     continue;
                 }
@@ -114,41 +118,5 @@ class CreateDTO extends Command
             $this->addContractorWithRequiredArgument($class, $requiredParameters);
         };
         return $classes;
-    }
-
-
-    /**
-     * TODO move to separate class
-     */
-    private function createDirectoryIfNotExist(string $directory):void
-    {
-        if (!file_exists($directory)) {
-            mkdir($directory, 0777, true);
-        }
-    }
-
-    /**
-     * @param ClassType $class
-     * @param string $namespace
-     * @param $namespace
-     */
-    protected function generateClassFile(ClassType $class, string $namespaceName, string $outputDirectory): void
-    {
-        $file = new PhpFile();
-        $namespace = $file->addNamespace($namespaceName);
-        $namespace->add($class);
-
-        $directory = sprintf('%s/%s', $outputDirectory, str_replace('\\', '/', $namespaceName));
-        $filepath = sprintf('%s/%s.php', $directory, $class->getName());
-        $this->createDirectoryIfNotExist($directory);
-        $this->logger->debug('Generating class {namespace}\{class} in {path}', [
-            'namespace' => $namespaceName,
-            'class' => $class->getName(),
-            'path' => $filepath,
-        ]);
-        file_put_contents(
-            $filepath,
-            $this->printer->printFile($file)
-        );
     }
 }
