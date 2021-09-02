@@ -2,7 +2,7 @@
 
 ## To set up 
 ```bash
-./init
+./composer i
 ```
 ## To use 
 ```shell

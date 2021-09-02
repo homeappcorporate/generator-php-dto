@@ -7,10 +7,10 @@ use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Parameter;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateDTO extends Command
@@ -25,14 +25,14 @@ class CreateDTO extends Command
 
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'create-dto';
-    private string $namespaceForResponses = 'Generated\\Responses';
 
     protected function configure(): void
     {
         $this
             ->setDescription('Generate class from json')
             ->addArgument('path-json', InputArgument::REQUIRED, 'From which class will be generated')
-            ->addArgument('path-out', InputArgument::OPTIONAL, 'Where put generated content', sprintf('%s/out', getcwd()));
+            ->addArgument('path-out', InputArgument::OPTIONAL, 'Where put generated content', sprintf('%s/out', getcwd()))
+            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace what all generated classes will have', 'Generated\\');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -40,11 +40,14 @@ class CreateDTO extends Command
         $path =  $input->getArgument('path-json');
         $json = json_decode(file_get_contents($path), true);
         $outputDirectory = $input->getArgument('path-out');
+        $globalNamespace = $input->getOption('namespace');
 
         $responses = $json['components']['responses'];
         $classesFromResponses = $this->extractClassesFromResponses($responses);
+        $subNamespace = 'Responses';
         foreach ($classesFromResponses as $class) {
-            $this->generateClassFile($class, 'Responses', $outputDirectory);
+            $class->setFinal();
+            $this->generateClassFile($class, sprintf('%s/%s', $globalNamespace, $subNamespace), $outputDirectory);
         }
         return Command::SUCCESS;
     }
@@ -119,16 +122,16 @@ class CreateDTO extends Command
 
     /**
      * @param ClassType $class
-     * @param string $subdirectory
-     * @param $outputDirectory
+     * @param string $namespace
+     * @param $namespace
      */
-    protected function generateClassFile(ClassType $class, string $subdirectory, $outputDirectory): void
+    protected function generateClassFile(ClassType $class, string $namespace, $outputDirectory): void
     {
         $file = new PhpFile();
-        $namespace = $file->addNamespace($this->namespaceForResponses);
+        $namespace = $file->addNamespace($namespace);
         $namespace->add($class);
 
-        $directory = sprintf('%s/%s', $outputDirectory, $subdirectory);
+        $directory = sprintf('%s/%s', $outputDirectory, $namespace);
         $filepath = sprintf('%s/%s.php', $directory, $class->getName());
         $this->createDirectoryIfNotExist($directory);
         file_put_contents(
