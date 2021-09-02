@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Homeapp\\LibraryOrProjectName\\": "src"
+            "Homeapp\\OpenapiGenerator\\": "src"
         }
     },
     "minimum-stability": "dev",
@@ -27,5 +27,9 @@
             "name": "Legion112",
             "email": "ageev.maks2014@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "nette/php-generator": "v3.6.x-dev",
+        "symfony/console": "5.4.x-dev"
+    }
 }

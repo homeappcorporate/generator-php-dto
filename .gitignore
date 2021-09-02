@@ -2,7 +2,7 @@
 vendor
 .phpunit.result.cache
 .phpunit.cache
-
+out/
 # PHPStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/20654483
 # Copy from https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
@@ -13,7 +13,7 @@ vendor
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+.idea
 # Generated files
 .idea/**/contentModel.xml
 

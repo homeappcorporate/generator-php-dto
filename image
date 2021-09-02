@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run --rm -v $(pwd)/:/var/www -w /var/www  cr.yandex/crp9oibc0crhhtjlkm0g/base/cli:latest "$@"

@@ -1,0 +1,134 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "1.0.0",
+    "title": "Publisher API"
+  },
+  "servers": [
+    {
+      "url": "https://publisher.homeapp.ru"
+    }
+  ],
+  "paths": {
+    "/api/crud/zipal-building/{id}": {
+      "put": {
+        "operationId": "replace-zipal-bilding",
+        "summary": "Обронить данные о комплексе",
+        "description": "Обновить комплекс",
+        "tags": [
+          "Комплексы"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "description": "ID комплекса",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZipalBuilding"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReplaceZipalBildingResponse"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Комплексы"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    },
+    {
+      "CookieAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-auth-hc"
+      },
+      "CookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "ha_session"
+      }
+    },
+    "responses": {
+      "ReplaceZipalBildingResponse": {
+        "description": "Успешно измененный комплекс",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "success",
+                "data"
+              ],
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "nullable": false,
+                  "description": "Успешный ли ответ",
+                  "example": true
+                },
+                "data": {
+                  "$ref": "#/components/schemas/ZipalBuilding"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ZipalBuilding": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "description": "Жилой комплекс",
+        "nullable": false,
+        "properties": {
+          "id": {
+            "description": "ID может быть чем угодно",
+            "type": "string"
+          },
+          "cianId": {
+            "description": "Идентификатор на ЦИАН",
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "description": "Только название комплекса",
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "description": "Моленое имя комплекса",
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}
