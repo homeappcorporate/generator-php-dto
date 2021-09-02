@@ -6,7 +6,7 @@ use Homeapp\OpenapiGenerator\Writer;
 use Nette\PhpGenerator\Printer;
 use Psr\Log\LoggerInterface;
 
-class ClassFactoryGenerator
+class FileClassFactoryGenerator
 {
     private Printer $printer;
     private LoggerInterface $logger;
