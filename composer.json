@@ -3,6 +3,7 @@
     "description": "A basic template for creating php packages with basic setup: psalm, php-cs-fixer, phpunit, CI with running test",
     "type": "project",
     "require-dev": {
+        "php": "^7.4",
         "vimeo/psalm": "^4.7",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpunit/phpunit": "^9.5",
