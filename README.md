@@ -1,17 +1,13 @@
 # A skeleton project
-## How to use
-`composer create-project homeapp/php-skeleton repositry-name`
 
-
-
-# After creating project
-Change in `composer.json`
+## To set up 
+```bash
+./init
 ```
-"name":
-"description": 
-"Homeapp\\LibraryOrProjectName\\":
+## To use 
+```shell
+
 ```
-Change the README.md
 
 # Tools
 ## To fix code style issues 

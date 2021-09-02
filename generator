@@ -1,19 +1,2 @@
-#!/usr/bin/env php
-<?php
-require __DIR__.'/vendor/autoload.php';
-function dd(... $arguments)
-{
-    foreach ($arguments as $argument) {
-        var_dump($argument);
-    }
-    die;
-}
-
-use Homeapp\OpenapiGenerator\Command\CreateDTO;
-use Nette\PhpGenerator\Printer;
-use Symfony\Component\Console\Application;
-
-$application = new Application();
-$application->add(new CreateDTO(null, new Printer()));
-
-$application->run();
+#!/bin/bash
+docker run --rm -v $(pwd)/:/var/www/ -w /var/www/ php:7.4-cli-alpine3.13 "./bin/generator" "$@"

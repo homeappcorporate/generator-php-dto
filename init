@@ -1,0 +1,9 @@
+#!/bin/bash
+docker run --rm \
+ -v $(pwd)/:/var/www \
+ -v $(pwd)/setup:/tmp/setup/ \
+  -w /var/www \
+  --entrypoint="/bin/sh" \
+  php:7.4-cli-alpine3.13 -c "/tmp/setup/install-composer && composer i"
+
+

@@ -3,6 +3,8 @@ vendor
 .phpunit.result.cache
 .phpunit.cache
 out/
+composer-setup.php
+composer
 # PHPStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/20654483
 # Copy from https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
