@@ -1,4 +1,4 @@
-# A skeleton project
+# PHP DTO code generator form OpenAPI spect
 
 ## To set up 
 ```bash
@@ -6,10 +6,11 @@
 ```
 ## To use 
 ```shell
-
+./generator create-dto ./examples/publisher.json  
 ```
 
-# Tools
+
+# Development Tools
 ## To fix code style issues 
 `vendor/bin/php-cs-fixer fix`
 ## To run test
