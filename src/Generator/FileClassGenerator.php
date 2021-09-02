@@ -9,7 +9,7 @@ use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
 use Psr\Log\LoggerInterface;
 
-class ClassGenerator
+class FileClassGenerator
 {
     private Printer $printer;
     private LoggerInterface $logger;

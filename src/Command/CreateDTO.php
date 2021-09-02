@@ -5,15 +5,9 @@ namespace Homeapp\OpenapiGenerator\Command;
 
 use Homeapp\OpenapiGenerator\OpenApi\PHPClassDefinitionExtractor;
 use Homeapp\OpenapiGenerator\DTO\ClassDefinitionData;
-use Homeapp\OpenapiGenerator\Generator\FileClassFactoryGenerator;
-use Homeapp\OpenapiGenerator\Generator\ClassGenerator;
+use Homeapp\OpenapiGenerator\Generator\FileClassGeneratorFactory;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
-use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\Method;
-use Nette\PhpGenerator\Parameter;
-use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
-use Nette\PhpGenerator\Type;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class CreateDTO extends Command
 {
     private TypeMapper $typeMapper;
-    private FileClassFactoryGenerator $classFactoryGenerator;
+    private FileClassGeneratorFactory $classFactoryGenerator;
     private PHPClassDefinitionExtractor $phpClassDefinitionExtractor;
 
     public function __construct(
@@ -33,7 +27,7 @@ final class CreateDTO extends Command
         LoggerInterface $logger,
         TypeMapper $typeMapper,
         PHPClassDefinitionExtractor $phpClassDefinitionExtractor,
-        FileClassFactoryGenerator $classFactoryGenerator
+        FileClassGeneratorFactory $classFactoryGenerator
     ) {
         parent::__construct($name);
         $this->printer = $printer;
@@ -86,7 +80,7 @@ final class CreateDTO extends Command
         $classesFromResponses = $this->extractClassesFromResponses($responses);
         foreach ($classesFromResponses as $classData) {
             $classData->class->setFinal();
-            $classGenerator->generateClassFile($classData->class, sprintf('%s%s', $globalNamespace, $classData->namespace));
+            $classGenerator->generateClassFile($classData->class, $this->getClassFullNamespace($globalNamespace, $classData));
         }
         return Command::SUCCESS;
     }
@@ -110,5 +104,15 @@ final class CreateDTO extends Command
             array_push($result, ...$classes);
         }
         return $result;
+    }
+
+    /**
+     * @param $globalNamespace
+     * @param ClassDefinitionData $classData
+     * @return string
+     */
+    protected function getClassFullNamespace($globalNamespace, ClassDefinitionData $classData): string
+    {
+        return sprintf('%s%s', $globalNamespace, $classData->namespace);
     }
 }

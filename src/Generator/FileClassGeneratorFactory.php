@@ -6,7 +6,7 @@ use Homeapp\OpenapiGenerator\Writer;
 use Nette\PhpGenerator\Printer;
 use Psr\Log\LoggerInterface;
 
-class FileClassFactoryGenerator
+class FileClassGeneratorFactory
 {
     private Printer $printer;
     private LoggerInterface $logger;
@@ -19,9 +19,9 @@ class FileClassFactoryGenerator
         $this->writer = $writer;
     }
 
-    public function build(string $outputDirectory):ClassGenerator
+    public function build(string $outputDirectory):FileClassGenerator
     {
-        return new ClassGenerator($this->printer, $this->logger, $this->writer, $outputDirectory);
+        return new FileClassGenerator($this->printer, $this->logger, $this->writer, $outputDirectory);
     }
 
 }

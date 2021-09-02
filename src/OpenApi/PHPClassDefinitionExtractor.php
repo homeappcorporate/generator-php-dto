@@ -13,10 +13,16 @@ class PHPClassDefinitionExtractor
 {
     private TypeMapper $typeMapper;
     private array $mapExtractedClasses = [];
+    private string $globalNamespace = '';
 
     public function __construct(TypeMapper $typeMapper)
     {
         $this->typeMapper = $typeMapper;
+    }
+
+    public function setGlobalNamespace(string $namespace):void
+    {
+        $this->globalNamespace = $namespace;
     }
 
     /**
@@ -40,7 +46,7 @@ class PHPClassDefinitionExtractor
     /**
      * @return ClassDefinitionData[]
      */
-    public function extractClassesDefinition(string $className, string $namespace, string $description, array $openAPIProperties): array
+    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $openAPIProperties): array
     {
         $classes = [];
         $class = new ClassType($className);
@@ -51,6 +57,7 @@ class PHPClassDefinitionExtractor
         $requiredParameters = [];
         foreach ($properties as $propertyName => $propertyStructure) {
             if (array_key_exists('$ref', $propertyStructure)) {
+//                $this->extractSchemaDefinition($propertyStructure['$ref']);
                 // TODO implement
                 continue;
             }
@@ -65,7 +72,7 @@ class PHPClassDefinitionExtractor
         }
 
         $this->addContractorWithRequiredArgument($class, $requiredParameters);
-        $classes[] = new  ClassDefinitionData($class, $namespace);
+        $classes[] = new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
         return $classes;
     }
 
@@ -76,5 +83,15 @@ class PHPClassDefinitionExtractor
     private function markAsExtracted(string $namespace, string $class):void
     {
         $this->mapExtractedClasses[sprintf('%s\%s', $namespace, $class)] = true;
+    }
+
+    private function getFullNamespace(string $namespace):string
+    {
+        return sprintf('%s%s', $this->globalNamespace, $namespace);
+    }
+
+    public function extractSchemaDefinition(string $schemaPath):ClassDefinitionData
+    {
+
     }
 }
