@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 require dirname(__DIR__) . '/vendor/autoload.php';
+
 function dd(... $arguments)
 {
     foreach ($arguments as $argument) {
@@ -10,10 +11,12 @@ function dd(... $arguments)
 }
 
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
-use Nette\PhpGenerator\Printer;
 use Symfony\Component\Console\Application;
 
+$di = require dirname(__DIR__) . '/config/di.php';
+
 $application = new Application();
-$application->add(new CreateDTO(null, new Printer()));
+$di->get(CreateDTO::class);
+$application->add($di->get(CreateDTO::class));
 
 $application->run();

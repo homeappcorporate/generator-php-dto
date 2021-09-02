@@ -7,7 +7,7 @@
             "Homeapp\\OpenapiGenerator\\": "src"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload-dev": {
         "psr-4": {
             "Test\\": "test"
@@ -22,14 +22,15 @@
     ],
     "require": {
         "php": "^7.4",
-        "nette/php-generator": "v3.6.x-dev",
-        "symfony/console": "5.4.x-dev"
+        "nette/php-generator": "^3.5",
+        "symfony/console": "^5.3",
+        "php-di/php-di": "^6.3",
+        "monolog/monolog": "^2.3"
     },
     "require-dev": {
         "vimeo/psalm": "^4.7",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpunit/phpunit": "^9.5",
-        "roave/security-advisories": "dev-latest",
-        "roave/backward-compatibility-check": "dev-master"
+        "roave/security-advisories": "dev-latest"
     }
 }

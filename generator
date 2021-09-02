@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run --rm -v $(pwd)/:/var/www/ -w /var/www/ php:7.4-cli-alpine3.13 "./bin/generator" "$@"
+docker run --rm -it -v $(pwd)/:/var/www/ -w /var/www/ php:7.4-cli-alpine3.13 "./bin/generator" "$@"

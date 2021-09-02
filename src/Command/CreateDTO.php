@@ -2,11 +2,14 @@
 
 namespace Homeapp\OpenapiGenerator\Command;
 
+use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Parameter;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
+use Nette\PhpGenerator\Type;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,11 +19,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateDTO extends Command
 {
     private Printer $printer;
+    private LoggerInterface $logger;
+    private TypeMapper $typeMapper;
 
-    public function __construct(string $name = null, Printer $printer)
+    public function __construct(string $name = null, Printer $printer, LoggerInterface $logger, TypeMapper $typeMapper)
     {
         parent::__construct($name);
         $this->printer = $printer;
+        $this->logger = $logger;
+        $this->typeMapper = $typeMapper;
     }
 
     // the name of the command (the part after "bin/console")
@@ -47,7 +54,7 @@ class CreateDTO extends Command
         $subNamespace = 'Responses';
         foreach ($classesFromResponses as $class) {
             $class->setFinal();
-            $this->generateClassFile($class, sprintf('%s/%s', $globalNamespace, $subNamespace), $outputDirectory);
+            $this->generateClassFile($class, sprintf('%s%s', $globalNamespace, $subNamespace), $outputDirectory);
         }
         return Command::SUCCESS;
     }
@@ -96,7 +103,7 @@ class CreateDTO extends Command
                 }
                 $property = $class->addProperty($propertyName);
                 ['type' => $type, 'nullable' => $nullable, 'description' => $description] = $propertyStructure;
-                $property->setType($type);
+                $property->setType($this->typeMapper->map($type));
                 $property->addComment($description);
                 $property->setNullable($nullable);
                 if (!$nullable) {
@@ -125,19 +132,23 @@ class CreateDTO extends Command
      * @param string $namespace
      * @param $namespace
      */
-    protected function generateClassFile(ClassType $class, string $namespace, $outputDirectory): void
+    protected function generateClassFile(ClassType $class, string $namespaceName, string $outputDirectory): void
     {
         $file = new PhpFile();
-        $namespace = $file->addNamespace($namespace);
+        $namespace = $file->addNamespace($namespaceName);
         $namespace->add($class);
 
-        $directory = sprintf('%s/%s', $outputDirectory, $namespace);
+        $directory = sprintf('%s/%s', $outputDirectory, str_replace('\\', '/', $namespaceName));
         $filepath = sprintf('%s/%s.php', $directory, $class->getName());
         $this->createDirectoryIfNotExist($directory);
+        $this->logger->debug('Generating class {namespace}\{class} in {path}', [
+            'namespace' => $namespaceName,
+            'class' => $class->getName(),
+            'path' => $filepath,
+        ]);
         file_put_contents(
             $filepath,
             $this->printer->printFile($file)
         );
     }
-
 }
