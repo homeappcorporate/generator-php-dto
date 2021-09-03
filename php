@@ -1,5 +1,11 @@
 #!/bin/bash
-COMMAND="/var/www/setup/install-composer && ${@}";
+#firstArgument=$1
+#firstCharacter="${firstArgument%"${firstArgument#?}"}"
+#if [ "$firstCharacter" = "-" ];  then
+#  COMMAND="php ${@}"
+#else
+  COMMAND="/var/www/setup/install-composer && ${@}";
+#fi
 docker run --rm -it \
  -v $(pwd)/:/var/www \
  -v temp-composer:/composer \
