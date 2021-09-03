@@ -2,7 +2,7 @@
 
 ## To set up 
 ```bash
-./composer i
+./php composer i
 ```
 ## To use 
 ```shell
