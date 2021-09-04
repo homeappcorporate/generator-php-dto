@@ -26,7 +26,7 @@ class Crawler
     }
 
     /**
-     * @psalm-return \Traversable<int, class>
+     * @psalm-return \Traversable<int, ClassDefinitionData>
      */
     public function walk(array $openapi): \Traversable
     {
@@ -40,6 +40,11 @@ class Crawler
         foreach ($schemas as $schemaName => $schema) {
             yield $this->schemaExtractor->extractSchema($schemaName, $schema);
         }
+//
+//        foreach ($schemas as $schemaName => $schema) {
+//            yield $this->schemaExtractor->extractSchema($schemaName, $schema);
+//        }
+//
 
 //        foreach ($paths as $path => $pathData) {
 //            foreach ($pathData as $method => $methodData) {

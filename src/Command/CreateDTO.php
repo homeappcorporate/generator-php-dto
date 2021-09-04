@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Homeapp\OpenapiGenerator\Command;
 
+use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\NamespaceHelper;
 use Homeapp\OpenapiGenerator\OpenApi\Reader;
 use RuntimeException;
@@ -85,6 +86,7 @@ final class CreateDTO extends Command
         $this->namespaceHelper->setGlobalNamespace($globalNamespace);
 
         foreach ($this->crawler->walk($openapi) as $definition) {
+            /** @var ClassDefinitionData $definition */
             $definition->class->setFinal();
             $this->fileClassGenerator->generateClassFile($definition);
         }

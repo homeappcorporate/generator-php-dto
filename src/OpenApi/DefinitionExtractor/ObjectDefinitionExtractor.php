@@ -4,6 +4,7 @@ namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
 
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
+use Homeapp\OpenapiGenerator\NamespaceHelper;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
@@ -18,17 +19,12 @@ use function sprintf;
 class ObjectDefinitionExtractor
 {
     private TypeMapper $typeMapper;
-    private array $mapExtractedClasses = [];
-    private string $globalNamespace = '';
+    private NamespaceHelper $namespaceHelper;
 
-    public function __construct(TypeMapper $typeMapper)
+    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper)
     {
         $this->typeMapper = $typeMapper;
-    }
-
-    public function setGlobalNamespace(string $namespace):void
-    {
-        $this->globalNamespace = $namespace;
+        $this->namespaceHelper = $namespaceHelper;
     }
 
     /**
@@ -80,20 +76,6 @@ class ObjectDefinitionExtractor
             }
         }
         $this->addContractorWithRequiredArgument($class, $requiredParameters);
-        return new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
-    }
-
-    private function alreadyExtracted(string $namespace, string $class):bool
-    {
-        return array_key_exists(sprintf('%s\%s', $namespace, $class), $this->mapExtractedClasses);
-    }
-    private function markAsExtracted(string $namespace, string $class):void
-    {
-        $this->mapExtractedClasses[sprintf('%s\%s', $namespace, $class)] = true;
-    }
-
-    private function getFullNamespace(string $namespace):string
-    {
-        return sprintf('%s%s', $this->globalNamespace, $namespace);
+        return new  ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace));
     }
 }
