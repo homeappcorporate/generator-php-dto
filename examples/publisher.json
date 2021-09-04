@@ -104,6 +104,7 @@
         "properties": {
           "id": {
             "description": "ID может быть чем угодно",
+            "default": null,
             "type": "string"
           },
           "cianId": {

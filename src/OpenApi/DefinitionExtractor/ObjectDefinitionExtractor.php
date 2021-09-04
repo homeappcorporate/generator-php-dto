@@ -1,6 +1,6 @@
 <?php
 
-namespace Homeapp\OpenapiGenerator\OpenApi;
+namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
 
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
@@ -9,7 +9,13 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Parameter;
 
-class PHPClassDefinitionExtractor
+use Nette\PhpGenerator\Property;
+
+use function array_key_exists;
+use function DI\add;
+use function sprintf;
+
+class ObjectDefinitionExtractor
 {
     private TypeMapper $typeMapper;
     private array $mapExtractedClasses = [];
@@ -26,7 +32,7 @@ class PHPClassDefinitionExtractor
     }
 
     /**
-     * @param Parameter[] $arguments
+     * @param list<Property> $arguments
      */
     private function addContractorWithRequiredArgument(ClassType $class, array $arguments): void
     {
@@ -44,14 +50,13 @@ class PHPClassDefinitionExtractor
     }
 
     /**
-     * @return \Traversable<int, ClassDefinitionData>
+     * @return ClassDefinitionData
      */
-    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $openAPIProperties): \Traversable
+    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $properties, array $required): ClassDefinitionData
     {
-        $classes = [];
+        $requiredMap = array_flip($required);
         $class = new ClassType($className);
         $class->addComment($description);
-        $properties = $openAPIProperties;
         $construct = new Method('__construct');
         $construct->setPublic();
         $requiredParameters = [];
@@ -63,16 +68,19 @@ class PHPClassDefinitionExtractor
             }
             $property = $class->addProperty($propertyName);
             ['type' => $type, 'nullable' => $nullable, 'description' => $description] = $propertyStructure;
+            $nullable = $nullable ?? false;
             $property->setType($this->typeMapper->map($type));
             $property->addComment($description);
             $property->setNullable($nullable);
-            if (!$nullable) {
+            if ($nullable) {
+                $property->setValue(null);
+            }
+            if (!$nullable || ($requiredMap[$propertyName] ?? null) !== null) {
                 $requiredParameters[] = $property;
             }
         }
-
         $this->addContractorWithRequiredArgument($class, $requiredParameters);
-        yield new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
+        return new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
     }
 
     private function alreadyExtracted(string $namespace, string $class):bool

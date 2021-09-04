@@ -5,20 +5,24 @@ declare(strict_types=1);
 namespace Homeapp\OpenapiGenerator\OpenApi;
 
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
+use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\ObjectDefinitionExtractor;
 use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\RequestBodyExtractor;
+use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\SchemaExtractor;
 use Homeapp\OpenapiGenerator\OperationNameConverter;
 
 class Crawler
 {
-    private PHPClassDefinitionExtractor $classDefinitionExtractor;
+    private ObjectDefinitionExtractor $classDefinitionExtractor;
     private RequestBodyExtractor $requestBodyExtractor;
     private OperationNameConverter $nameConverter;
+    private SchemaExtractor $schemaExtractor;
 
-    public function __construct(PHPClassDefinitionExtractor $classDefinitionExtractor, RequestBodyExtractor $requestBodyExtractor, OperationNameConverter $nameConverter)
+    public function __construct(ObjectDefinitionExtractor $classDefinitionExtractor, RequestBodyExtractor $requestBodyExtractor, OperationNameConverter $nameConverter, SchemaExtractor $schemaExtractor)
     {
         $this->classDefinitionExtractor = $classDefinitionExtractor;
         $this->requestBodyExtractor = $requestBodyExtractor;
         $this->nameConverter = $nameConverter;
+        $this->schemaExtractor = $schemaExtractor;
     }
 
     /**
@@ -30,7 +34,12 @@ class Crawler
             'paths' => $paths,
             'components' => [
             'responses' => $responses,
+            'schemas' => $schemas,
         ]] = $openapi;
+
+        foreach ($schemas as $schemaName => $schema) {
+            yield $this->schemaExtractor->extractSchema($schemaName, $schema);
+        }
 
 //        foreach ($paths as $path => $pathData) {
 //            foreach ($pathData as $method => $methodData) {
@@ -55,21 +64,21 @@ class Crawler
 //        }
     }
 
-    /**
-     * @param string $responseName
-     * @param array $stracture
-     * @return \Traversable<int, ClassDefinitionData>
-     */
-    private function extractClassesFromResponse(string $responseName, array $stracture): \Traversable
-    {
-        $schema = $stracture['content']['application/json']['schema'];
-        foreach ($this->classDefinitionExtractor->extractClassesDefinition(
-            $responseName,
-            'Responses',
-            $stracture['description'],
-            $schema['properties'],
-        ) as $class) {
-            yield $class;
-        }
-    }
+//    /**
+//     * @param string $responseName
+//     * @param array $stracture
+//     * @return \Traversable<int, ClassDefinitionData>
+//     */
+//    private function extractClassesFromResponse(string $responseName, array $stracture): \Traversable
+//    {
+//        $schema = $stracture['content']['application/json']['schema'];
+//        foreach ($this->classDefinitionExtractor->extractClassesDefinition(
+//            $responseName,
+//            'Responses',
+//            $stracture['description'],
+//            $schema['properties'],
+//        ) as $class) {
+//            yield $class;
+//        }
+//    }
 }
