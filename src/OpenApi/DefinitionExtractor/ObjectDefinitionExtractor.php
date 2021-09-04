@@ -5,6 +5,7 @@ namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\NamespaceHelper;
+use Homeapp\OpenapiGenerator\OpenApi\RefFullClassNameConverter;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
@@ -20,11 +21,13 @@ class ObjectDefinitionExtractor
 {
     private TypeMapper $typeMapper;
     private NamespaceHelper $namespaceHelper;
+    private RefFullClassNameConverter $refFullClassNameConverter;
 
-    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper)
+    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter)
     {
         $this->typeMapper = $typeMapper;
         $this->namespaceHelper = $namespaceHelper;
+        $this->refFullClassNameConverter = $refFullClassNameConverter;
     }
 
     /**
@@ -57,14 +60,28 @@ class ObjectDefinitionExtractor
         $construct->setPublic();
         $requiredParameters = [];
         foreach ($properties as $propertyName => $propertyStructure) {
+            $property = $class->addProperty($propertyName);
             if (array_key_exists('$ref', $propertyStructure)) {
+                $refClassName = $this->refFullClassNameConverter->convertRefToFullClassName($propertyStructure['$ref']);
+                $property->setType($refClassName);
+                ['nullable' => $nullable, 'description' => $description] = $propertyStructure;
+                $nullable = $nullable ?? false;
+                if ($description !== null) {
+                    $property->addComment($description);
+                }
+                $property->setNullable($nullable);
+                if ($nullable) {
+                    $property->setValue(null);
+                }
+                if (!$nullable || ($requiredMap[$propertyName] ?? false)) {
+                    $requiredParameters[] = $property;
+                }
 //                $this->extractSchemaDefinition($propertyStructure['$ref']);
                 // TODO implement
                 continue;
             }
-            $property = $class->addProperty($propertyName);
             ['type' => $type, 'nullable' => $nullable, 'description' => $description] = $propertyStructure;
-            $nullable = $nullable ?? false;
+            $nullable = $nullable ?? true;
             $property->setType($this->typeMapper->map($type));
             $property->addComment($description);
             $property->setNullable($nullable);
