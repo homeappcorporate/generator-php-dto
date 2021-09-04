@@ -93,6 +93,6 @@ class ObjectDefinitionExtractor
             }
         }
         $this->addContractorWithRequiredArgument($class, $requiredParameters);
-        return new  ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace));
+        return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace), $subNamespace);
     }
 }

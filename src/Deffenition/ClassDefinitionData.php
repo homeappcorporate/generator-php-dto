@@ -11,15 +11,17 @@ class ClassDefinitionData
 {
     public ClassType $class;
     public string $namespace;
+    public string $subNamespace;
 
     /**
      * @param ClassType $class
-     * @param string $namespace
+     * @param string $fullNamespace
      */
-    public function __construct(ClassType $class, string $namespace)
+    public function __construct(ClassType $class, string $fullNamespace, string $subNamespace)
     {
         $this->class = $class;
-        $this->namespace = $namespace;
+        $this->namespace = $fullNamespace;
+        $this->subNamespace = $subNamespace;
     }
 
 }

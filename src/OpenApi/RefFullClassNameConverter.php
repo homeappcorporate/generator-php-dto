@@ -18,6 +18,6 @@ class RefFullClassNameConverter
         $rest = substr($ref, strlen('#/components/'));
         $parts = explode('/', $rest);
         $parts = array_map('ucfirst', $parts);
-        return $this->namespaceHelper->getClassReference($parts[1], $parts[0]);
+        return $this->namespaceHelper->getClassReference($parts[0], $parts[1]);
     }
 }

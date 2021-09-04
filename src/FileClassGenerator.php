@@ -32,7 +32,7 @@ class FileClassGenerator
         $namespace = $file->addNamespace($definition->namespace);
         $namespace->add($class);
 
-        $filepath = $this->getFilepathForClass($definition->namespace, $class);
+        $filepath = $this->getFilepathForClass($definition->subNamespace, $class);
         $this->logger->debug('Generating class {namespace}\{class} in {path}', [
             'namespace' => $definition->namespace,
             'class' => $class->getName(),
