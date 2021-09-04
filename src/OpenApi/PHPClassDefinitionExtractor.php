@@ -3,7 +3,7 @@
 namespace Homeapp\OpenapiGenerator\OpenApi;
 
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
-use Homeapp\OpenapiGenerator\DTO\ClassDefinitionData;
+use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
@@ -28,7 +28,7 @@ class PHPClassDefinitionExtractor
     /**
      * @param Parameter[] $arguments
      */
-    public function addContractorWithRequiredArgument(ClassType $class, array $arguments): void
+    private function addContractorWithRequiredArgument(ClassType $class, array $arguments): void
     {
         $construct = $class->addMethod('__construct');
         $body = '';
@@ -44,9 +44,9 @@ class PHPClassDefinitionExtractor
     }
 
     /**
-     * @return ClassDefinitionData[]
+     * @return \Traversable<int, ClassDefinitionData>
      */
-    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $openAPIProperties): array
+    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $openAPIProperties): \Traversable
     {
         $classes = [];
         $class = new ClassType($className);
@@ -72,8 +72,7 @@ class PHPClassDefinitionExtractor
         }
 
         $this->addContractorWithRequiredArgument($class, $requiredParameters);
-        $classes[] = new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
-        return $classes;
+        yield new  ClassDefinitionData($class, $this->getFullNamespace($subNamespace));
     }
 
     private function alreadyExtracted(string $namespace, string $class):bool
@@ -88,10 +87,5 @@ class PHPClassDefinitionExtractor
     private function getFullNamespace(string $namespace):string
     {
         return sprintf('%s%s', $this->globalNamespace, $namespace);
-    }
-
-    public function extractSchemaDefinition(string $schemaPath):ClassDefinitionData
-    {
-
     }
 }

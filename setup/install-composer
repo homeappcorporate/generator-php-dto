@@ -1,4 +1,4 @@
 if [ ! -f "/setup/composer" ]; then
-  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php --2 --filename=composer --install-dir=/tmp/setup --quiet && php -r "unlink('composer-setup.php');"
+  php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');" && php /tmp/composer-setup.php --2 --filename=composer --install-dir=/tmp/setup --quiet && php -r "unlink('/tmp/composer-setup.php');"
   ln -s /tmp/setup/composer /bin/composer
 fi

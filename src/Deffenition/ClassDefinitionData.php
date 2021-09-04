@@ -1,6 +1,6 @@
 <?php
 
-namespace Homeapp\OpenapiGenerator\DTO;
+namespace Homeapp\OpenapiGenerator\Deffenition;
 
 use Nette\PhpGenerator\ClassType;
 

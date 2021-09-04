@@ -16,8 +16,8 @@ $builder->addDefinitions(
             ->constructor('app', [
                 DI\get('monolog.handler.debug'),
             ], [
-                DI\get(PsrLogMessageProcessor::class)
-            ]),
+                  DI\get(PsrLogMessageProcessor::class),
+              ]),
         'monolog.handler.debug' => DI\create('Monolog\Handler\StreamHandler')
             ->constructor('php://stdout'),
         'monolog.handler.error' => DI\create('Monolog\Handler\StreamHandler')

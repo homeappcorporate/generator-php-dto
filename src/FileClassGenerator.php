@@ -1,8 +1,9 @@
 <?php
 
-namespace Homeapp\OpenapiGenerator\Generator;
+namespace Homeapp\OpenapiGenerator;
 
 use Homeapp\OpenapiGenerator\Command\CreateDTO;
+use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\Writer;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
@@ -16,7 +17,7 @@ class FileClassGenerator
     private string $outputDirectory;
     private Writer $writer;
 
-    public function __construct(Printer $printer, LoggerInterface $logger, Writer $fileWriter, string $outputDirectory)
+    public function __construct(Printer $printer, LoggerInterface $logger, Writer $fileWriter, string $outputDirectory = 'out')
     {
         $this->printer = $printer;
         $this->logger = $logger;
@@ -24,20 +25,16 @@ class FileClassGenerator
         $this->writer = $fileWriter;
     }
 
-    /**
-     * @param ClassType $class
-     * @param string $namespace
-     * @param $namespace
-     */
-    public function generateClassFile(ClassType $class, string $namespaceName): void
+    public function generateClassFile(ClassDefinitionData $definition): void
     {
+        $class = $definition->class;
         $file = new PhpFile();
-        $namespace = $file->addNamespace($namespaceName);
+        $namespace = $file->addNamespace($definition->namespace);
         $namespace->add($class);
 
-        $filepath = $this->getFilepathForClass($namespaceName, $class);
+        $filepath = $this->getFilepathForClass($definition->namespace, $class);
         $this->logger->debug('Generating class {namespace}\{class} in {path}', [
-            'namespace' => $namespaceName,
+            'namespace' => $definition->namespace,
             'class' => $class->getName(),
             'path' => $filepath,
         ]);
@@ -52,7 +49,11 @@ class FileClassGenerator
     protected function getFilepathForClass(string $namespaceName, ClassType $class): string
     {
         $directory = sprintf('%s/%s', $this->outputDirectory, str_replace('\\', '/', $namespaceName));
-        $filepath = sprintf('%s/%s.php', $directory, $class->getName());
-        return $filepath;
+        return sprintf('%s/%s.php', $directory, $class->getName());
+    }
+
+    public function setOutputDirectory(string $outputDirectory): void
+    {
+        $this->outputDirectory = $outputDirectory;
     }
 }

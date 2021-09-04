@@ -30,13 +30,7 @@
           }
         ],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ZipalBuilding"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/ReplaceZipalBuildingRequestBody"
         },
         "responses": {
           "200": {
@@ -126,6 +120,18 @@
             "description": "Моленое имя комплекса",
             "type": "string",
             "nullable": true
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "ReplaceZipalBuildingRequestBody": {
+        "description": "Запрос на замену Жилого комплекса",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ZipalBuilding"
+            }
           }
         }
       }

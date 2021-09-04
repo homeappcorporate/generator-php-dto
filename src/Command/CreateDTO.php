@@ -1,58 +1,58 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Homeapp\OpenapiGenerator\Command;
 
-use Homeapp\OpenapiGenerator\OpenApi\PHPClassDefinitionExtractor;
-use Homeapp\OpenapiGenerator\DTO\ClassDefinitionData;
-use Homeapp\OpenapiGenerator\Generator\FileClassGeneratorFactory;
-use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
-use Nette\PhpGenerator\Printer;
-use Psr\Log\LoggerInterface;
+use Homeapp\OpenapiGenerator\NamespaceHelper;
+use Homeapp\OpenapiGenerator\OpenApi\Reader;
+use RuntimeException;
+use Symfony\Component\Console\Exception\LogicException;
+use JsonException;
+use Homeapp\OpenapiGenerator\FileClassGenerator;
+use Homeapp\OpenapiGenerator\OpenApi\Crawler;
+use Homeapp\OpenapiGenerator\FileClassGeneratorFactory;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 final class CreateDTO extends Command
 {
-    private TypeMapper $typeMapper;
-    private FileClassGeneratorFactory $classFactoryGenerator;
-    private PHPClassDefinitionExtractor $phpClassDefinitionExtractor;
-
-    public function __construct(
-        string $name = null,
-        Printer $printer,
-        LoggerInterface $logger,
-        TypeMapper $typeMapper,
-        PHPClassDefinitionExtractor $phpClassDefinitionExtractor,
-        FileClassGeneratorFactory $classFactoryGenerator
-    ) {
-        parent::__construct($name);
-        $this->printer = $printer;
-        $this->logger = $logger;
-        $this->typeMapper = $typeMapper;
-        $this->classFactoryGenerator = $classFactoryGenerator;
-        $this->phpClassDefinitionExtractor = $phpClassDefinitionExtractor;
-    }
-
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'create-dto';
+    private FileClassGenerator $fileClassGenerator;
+    private Crawler $crawler;
+    private Reader $reader;
+    private NamespaceHelper $namespaceHelper;
 
     /**
-     * @return TypeMapper
+     * @throws LogicException
      */
-    public function getTypeMapper(): TypeMapper
-    {
-        return $this->typeMapper;
+    public function __construct(
+        Reader $reader,
+        Crawler $crawler,
+        FileClassGenerator $fileClassGenerator,
+        NamespaceHelper $namespaceHelper,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->crawler = $crawler;
+        $this->reader = $reader;
+        $this->fileClassGenerator = $fileClassGenerator;
+        $this->namespaceHelper = $namespaceHelper;
     }
 
+    protected static $defaultName = 'create-dto';
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function configure(): void
     {
         $this
             ->setDescription('Generate class from json')
-            ->addArgument('path-json', InputArgument::REQUIRED, 'From which class will be generated')
+            ->addArgument('input-file', InputArgument::REQUIRED, 'From which class will be generated')
             ->addArgument(
                 'path-out',
                 InputArgument::OPTIONAL,
@@ -68,51 +68,26 @@ final class CreateDTO extends Command
             );
     }
 
+    /**
+     * @throws JsonException|InvalidArgumentException|ParseException|RuntimeException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $path = $input->getArgument('path-json');
-        $json = json_decode(file_get_contents($path), true);
-        $outputDirectory = $input->getArgument('path-out');
-        $classGenerator = $this->classFactoryGenerator->build($outputDirectory);
-        $globalNamespace = $input->getOption('namespace');
+        /** @var string $path */
+        $path = $input->getArgument('input-file');
+        $openapi = $this->reader->extractPhpArrayFromFile($path);
 
-        $responses = $json['components']['responses'];
-        $classesFromResponses = $this->extractClassesFromResponses($responses);
-        foreach ($classesFromResponses as $classData) {
-            $classData->class->setFinal();
-            $classGenerator->generateClassFile($classData->class, $this->getClassFullNamespace($globalNamespace, $classData));
+        /** @var string $outputDirectory */
+        $outputDirectory = $input->getArgument('path-out');
+        $this->fileClassGenerator->setOutputDirectory($outputDirectory);
+        /** @var string $globalNamespace */
+        $globalNamespace = $input->getOption('namespace');
+        $this->namespaceHelper->setGlobalNamespace($globalNamespace);
+
+        foreach ($this->crawler->walk($openapi) as $definition) {
+            $definition->class->setFinal();
+            $this->fileClassGenerator->generateClassFile($definition);
         }
         return Command::SUCCESS;
-    }
-
-
-    /**
-     * @param $responses
-     * @return ClassDefinitionData[]
-     */
-    private function extractClassesFromResponses($responses): array
-    {
-        $result = [];
-        foreach ($responses as $responseName => $responseStructure) {
-            $schema = $responseStructure['content']['application/json']['schema'];
-            $classes = $this->phpClassDefinitionExtractor->extractClassesDefinition(
-                $responseName,
-                'Responses',
-                $responseStructure['description'],
-                $schema['properties'],
-            );
-            array_push($result, ...$classes);
-        }
-        return $result;
-    }
-
-    /**
-     * @param $globalNamespace
-     * @param ClassDefinitionData $classData
-     * @return string
-     */
-    protected function getClassFullNamespace($globalNamespace, ClassDefinitionData $classData): string
-    {
-        return sprintf('%s%s', $globalNamespace, $classData->namespace);
     }
 }
