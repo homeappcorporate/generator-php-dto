@@ -34,7 +34,7 @@
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/ReplaceZipalBildingResponse"
+            "$ref": "#/components/responses/ReplaceZipalBuildingResponse"
           }
         }
       }
@@ -67,7 +67,7 @@
       }
     },
     "responses": {
-      "ReplaceZipalBildingResponse": {
+      "ReplaceZipalBuildingResponse": {
         "description": "Успешно измененный комплекс",
         "content": {
           "application/json": {
