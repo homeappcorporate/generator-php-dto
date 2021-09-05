@@ -8,6 +8,9 @@
 ```shell
 ./generator create-dto ./examples/publisher.json  
 ```
+### or via image 
+
+
 # Deploy
 ## To build image
 ```shell

@@ -3,5 +3,5 @@ out/
 .github/
 .git/
 .gitignore
-./php-cs-fixer.dist.php
+php-cs-fixer.dist.php
 examples/
