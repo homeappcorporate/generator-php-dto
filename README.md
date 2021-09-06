@@ -10,6 +10,8 @@
 ```
 
 
+
+
 # Development Tools
 ## To fix code style issues 
 `vendor/bin/php-cs-fixer fix`
@@ -18,4 +20,7 @@
 ## To run static analizer
 `vendor/bin/psalm --no-cache`
 # TODO
-1. Remove minimum-stability: dev when [BackwardCompatibilityCheck](https://github.com/Roave/BackwardCompatibilityCheck) will be released 5.1 version
+- [ ] Support allOf, onOff, anyOf
+- [ ] SDK client generation
+- [ ] Image tag generation automation
+- [ ] Extention for codeception (in separate repository)
