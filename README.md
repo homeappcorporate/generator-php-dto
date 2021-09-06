@@ -1,5 +1,12 @@
 # PHP DTO code generator form OpenAPI spect
 
+## To build and publish image (TODO automate)
+```shell
+fearofcode/openapi-php-generator
+docker build . --tag fearofcode/openapi-php-generator fearofcode/openapi-php-generator
+docker push fearofcode/openapi-php-generator 
+```
+
 ## To set up 
 ```bash
 ./php composer i
@@ -11,15 +18,6 @@
 ### or via image 
 
 
-# Deploy
-## To build image
-```shell
-docker build . --tag fearofcode/openapi-php-generator --no-cache
-```
-## To publish
-```shell
-docker push fearofcode/openapi-php-generator:latest
-```
 # Development Tools
 ## To fix code style issues 
 `vendor/bin/php-cs-fixer fix`
@@ -28,4 +26,7 @@ docker push fearofcode/openapi-php-generator:latest
 ## To run static analizer
 `vendor/bin/psalm --no-cache`
 # TODO
-1. Remove minimum-stability: dev when [BackwardCompatibilityCheck](https://github.com/Roave/BackwardCompatibilityCheck) will be released 5.1 version
+- [ ] Support allOf, onOff, anyOf
+- [ ] SDK client generation
+- [ ] Image tag generation automation
+- [ ] Extention for codeception (in separate repository)
