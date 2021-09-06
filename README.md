@@ -3,7 +3,7 @@
 ## To build and publish image (TODO automate)
 ```shell
 fearofcode/openapi-php-generator
-docker build . --tag fearofcode/openapi-php-generator fearofcode/openapi-php-generator
+docker build . --tag fearofcode/openapi-php-generator
 docker push fearofcode/openapi-php-generator 
 ```
 
