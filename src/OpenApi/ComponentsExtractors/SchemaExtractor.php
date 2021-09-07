@@ -6,15 +6,24 @@ namespace Homeapp\OpenapiGenerator\OpenApi\ComponentsExtractors;
 
 use Exception;
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
-use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\ObjectDefinitionExtractor;
+use Homeapp\OpenapiGenerator\NamespaceHelper;
+use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\PropertyExtractor;
+use Homeapp\OpenapiGenerator\PHP\ConstructorGenerator;
+use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\Method;
 
 class SchemaExtractor
 {
-    private ObjectDefinitionExtractor $objectDefinitionExtractor;
+    private const SUB_NAMESPACE = 'Schemas';
+    private ConstructorGenerator $constructorGenerator;
+    private NamespaceHelper $namespaceHelper;
+    private PropertyExtractor $propertyExtractor;
 
-    public function __construct(ObjectDefinitionExtractor $objectDefinitionExtractor)
+    public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor)
     {
-        $this->objectDefinitionExtractor = $objectDefinitionExtractor;
+        $this->constructorGenerator = $constructorGenerator;
+        $this->namespaceHelper = $namespaceHelper;
+        $this->propertyExtractor = $propertyExtractor;
     }
 
     /**
@@ -31,6 +40,21 @@ class SchemaExtractor
         if ($type !== 'object') {
             throw new Exception(sprintf('Type "%s" is not implemented', $type));
         }
-        return $this->objectDefinitionExtractor->extractClassesDefinition($schemaName, 'Schemas', $description, $properties, $required);
+        $class = new ClassType($schemaName);
+        $class->addComment($description);
+        $construct = new Method('__construct');
+        $construct->setPublic();
+        $constructorProperties = [];
+        foreach ($properties as $propertyName => $propertyStructure) {
+            $property = $this->propertyExtractor->extractProperty($propertyName, $propertyStructure);
+            if (in_array($property->getName(), $required)) {
+                $constructorProperties[] = $property;
+            }
+            $class->addMember($property);
+        }
+        if (!empty($constructorProperties)) {
+            $this->constructorGenerator->addContractorWithRequiredArgument($class, $constructorProperties);
+        }
+        return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace(self::SUB_NAMESPACE), self::SUB_NAMESPACE);
     }
 }

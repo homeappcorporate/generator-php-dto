@@ -24,13 +24,15 @@ class ObjectDefinitionExtractor
     private NamespaceHelper $namespaceHelper;
     private RefFullClassNameConverter $refFullClassNameConverter;
     private ConstructorGenerator $constructorGenerator;
+    private PropertyExtractor $propertyExtractor;
 
-    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter, ConstructorGenerator $constractorGenerator)
+    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter, ConstructorGenerator $constractorGenerator, PropertyExtractor $propertyExtractor)
     {
         $this->typeMapper = $typeMapper;
         $this->namespaceHelper = $namespaceHelper;
         $this->refFullClassNameConverter = $refFullClassNameConverter;
         $this->constructorGenerator = $constractorGenerator;
+        $this->propertyExtractor = $propertyExtractor;
     }
     /**
      * @return ClassDefinitionData
@@ -44,37 +46,8 @@ class ObjectDefinitionExtractor
         $construct->setPublic();
         $requiredParameters = [];
         foreach ($properties as $propertyName => $propertyStructure) {
-            $property = $class->addProperty($propertyName);
-            if (array_key_exists('$ref', $propertyStructure)) {
-                $refClassName = $this->refFullClassNameConverter->convertRefToFullClassName($propertyStructure['$ref']);
-                $property->setType($refClassName);
-                ['nullable' => $nullable, 'description' => $description] = $propertyStructure;
-                $nullable = $nullable ?? false;
-                if ($description !== null) {
-                    $property->addComment($description);
-                }
-                $property->setNullable($nullable);
-                if ($nullable) {
-                    $property->setValue(null);
-                }
-                if (!$nullable || ($requiredMap[$propertyName] ?? false)) {
-                    $requiredParameters[] = $property;
-                }
-//                $this->extractSchemaDefinition($propertyStructure['$ref']);
-                // TODO implement
-                continue;
-            }
-            ['type' => $type, 'nullable' => $nullable, 'description' => $description] = $propertyStructure;
-            $nullable = $nullable ?? true;
-            $property->setType($this->typeMapper->map($type));
-            $property->addComment($description);
-            $property->setNullable($nullable);
-            if ($nullable) {
-                $property->setValue(null);
-            }
-            if (!$nullable || ($requiredMap[$propertyName] ?? null) !== null) {
-                $requiredParameters[] = $property;
-            }
+            $property = $this->propertyExtractor->extractProperty($propertyName, $propertyStructure);
+            $class->addMember($property);
         }
         $this->constructorGenerator->addContractorWithRequiredArgument($class, $requiredParameters);
         return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace), $subNamespace);
