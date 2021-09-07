@@ -49,7 +49,7 @@ class ObjectDefinitionExtractor
             $property = $this->propertyExtractor->extractProperty($propertyName, $propertyStructure);
             $class->addMember($property);
         }
-        $this->constructorGenerator->addContractorWithRequiredArgument($class, $requiredParameters);
+        $this->constructorGenerator->addContractorWithRequiredArgument($class, $class->getProperties());
         return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace), $subNamespace);
     }
 }
