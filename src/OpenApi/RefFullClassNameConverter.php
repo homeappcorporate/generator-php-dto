@@ -10,6 +10,9 @@ class RefFullClassNameConverter
 {
     private NamespaceHelper $namespaceHelper;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(NamespaceHelper $namespaceHelper)
     {
         $this->namespaceHelper = $namespaceHelper;

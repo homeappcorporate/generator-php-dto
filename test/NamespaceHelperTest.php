@@ -28,7 +28,7 @@ class NamespaceHelperTest extends TestCase
         );
     }
 
-    public function testSetGlobalNamespace()
+    public function testSetGlobalNamespace():void
     {
         $this->helper->setGlobalNamespace('Bas');
         $this->assertSame(
@@ -37,7 +37,7 @@ class NamespaceHelperTest extends TestCase
         );
     }
 
-    public function testGetClassReference()
+    public function testGetClassReference():void
     {
         $this->assertSame(
             "Foo\Bar\Bas",

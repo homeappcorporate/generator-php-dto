@@ -18,6 +18,9 @@ final class TypeMapper
 
     private LoggerInterface $logger;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;

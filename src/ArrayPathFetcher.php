@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Homeapp\OpenapiGenerator;
 
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
+
 class ArrayPathFetcher
 {
     public function getContent(string $xpath, array &$array): array
@@ -26,9 +28,8 @@ class ArrayPathFetcher
     /**
      * @param $path
      * @param $temp
-     * @return mixed
      */
-    protected function getTemp($path, &$temp)
+    protected function getTemp($path, &$temp): array
     {
         foreach ($path as $key) {
             $temp =& $temp[$key];
