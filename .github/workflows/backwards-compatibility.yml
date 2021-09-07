@@ -8,7 +8,8 @@ on:
     types: [published, created]
 
 jobs:
-  name: Roave Backwards Compatibility Check
+  roave-backwards-compatibility-check:
+    name: "Roave Backwards Compatibility Check"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
