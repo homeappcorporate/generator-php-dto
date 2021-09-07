@@ -26,6 +26,8 @@ docker push fearofcode/openapi-php-generator
 `vendor/bin/psalm --no-cache`
 # TODO
 - [ ] Support allOf, onOff, anyOf
+- [ ] Discriminator
+- [ ] Enums
 - [ ] SDK client generation
 - [ ] Image tag generation automation
 - [ ] Extention for codeception (in separate repository)
