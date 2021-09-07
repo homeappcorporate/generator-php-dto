@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 
 final class TypeMapper
 {
+
     private const TYPE_MAP = [
         'boolean' =>Type::BOOL,
         'integer' => Type::INT,
