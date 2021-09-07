@@ -15,7 +15,7 @@ class Reader
      *
      * @throws JsonException|ParseException|RuntimeException
      */
-    public function extractPhpArrayFromFile(string $path):       array
+    public function extractPhpArrayFromFile(string $path): array
     {
         $realpath = realpath($path);
         $ext  = pathinfo($path, PATHINFO_EXTENSION);
