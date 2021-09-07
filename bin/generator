@@ -16,7 +16,6 @@ use Symfony\Component\Console\Application;
 $di = require dirname(__DIR__) . '/config/di.php';
 
 $application = new Application();
-$di->get(CreateDTO::class);
 $application->add($di->get(CreateDTO::class));
 
 $application->run();
