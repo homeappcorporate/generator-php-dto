@@ -7,6 +7,7 @@ use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\NamespaceHelper;
 use Homeapp\OpenapiGenerator\OpenApi\RefFullClassNameConverter;
 use Homeapp\OpenapiGenerator\OpenApi\TypeMapper;
+use Homeapp\OpenapiGenerator\PHP\ConstructorGenerator;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Parameter;
@@ -22,32 +23,15 @@ class ObjectDefinitionExtractor
     private TypeMapper $typeMapper;
     private NamespaceHelper $namespaceHelper;
     private RefFullClassNameConverter $refFullClassNameConverter;
+    private ConstructorGenerator $constructorGenerator;
 
-    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter)
+    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter, ConstructorGenerator $constractorGenerator)
     {
         $this->typeMapper = $typeMapper;
         $this->namespaceHelper = $namespaceHelper;
         $this->refFullClassNameConverter = $refFullClassNameConverter;
+        $this->constructorGenerator = $constractorGenerator;
     }
-
-    /**
-     * @param list<Property> $arguments
-     */
-    private function addContractorWithRequiredArgument(ClassType $class, array $arguments): void
-    {
-        $construct = $class->addMethod('__construct');
-        $body = '';
-        foreach ($arguments as $parameter) {
-            $name = $parameter->getName();
-            $body .= sprintf('$this->%s = $%s;' . PHP_EOL, $name, $name);
-            $construct->addParameter($name)
-                ->setNullable($parameter->isNullable())
-                ->setType($parameter->getType());
-        }
-        $construct->setBody($body);
-        $class->addMember($construct);
-    }
-
     /**
      * @return ClassDefinitionData
      */
@@ -92,7 +76,7 @@ class ObjectDefinitionExtractor
                 $requiredParameters[] = $property;
             }
         }
-        $this->addContractorWithRequiredArgument($class, $requiredParameters);
+        $this->constructorGenerator->addContractorWithRequiredArgument($class, $requiredParameters);
         return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace($subNamespace), $subNamespace);
     }
 }

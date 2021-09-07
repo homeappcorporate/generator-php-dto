@@ -4,39 +4,53 @@ declare(strict_types=1);
 
 namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
 
+use Exception;
+use Homeapp\OpenapiGenerator\ArrayPathFetcher;
+use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
 use Homeapp\OpenapiGenerator\Deffenition\RequestBodyDefinition;
 use Homeapp\OpenapiGenerator\NamespaceHelper;
-use Homeapp\OpenapiGenerator\ArrayPathFetcher;
-use Homeapp\OpenapiGenerator\OpenApi\RefClassGenerator;
 use Homeapp\OpenapiGenerator\OpenApi\RefData;
 use Nette\PhpGenerator\ClassType;
 use Psr\Log\LoggerInterface;
 
 class RequestBodyExtractor
 {
+    private const NAMESPACE = 'RequestBodies';
     private ArrayPathFetcher $path;
     private LoggerInterface $logger;
-    private RefClassGenerator $refClassGenerator;
+    private ArrayPathFetcher $fetcher;
+    private NamespaceHelper $namespaceHelper;
 
-    public function __construct(ArrayPathFetcher $path, LoggerInterface $logger, RefClassGenerator $refClassGenerator)
+    public function __construct(ArrayPathFetcher $path, LoggerInterface $logger, ArrayPathFetcher $fetcher, NamespaceHelper $namespaceHelper)
     {
         $this->path = $path;
         $this->logger = $logger;
-        $this->refClassGenerator = $refClassGenerator;
+        $this->fetcher = $fetcher;
+        $this->namespaceHelper = $namespaceHelper;
     }
 
-
-    public function generateRequestBodyDeffenition(string $operationName, string $xpath, array $openapi): RequestBodyDefinition
+    /**
+     * @throws Exception
+     */
+    public function extractResponseBody(string $requestBodyName, array $requestBody, array $openapi): ClassDefinitionData
     {
-        $requestBody = $this->path->getContent($xpath, $openapi);
-        if (($ref = $requestBody['$ref'] ?? null) !== null) {
-            $ref = new RefData($ref);
-            $this->refClassGenerator->generateClassByRef($ref, $openapi);
+        ['description' => $description, 'content' => ['application/json' => [
+            'schema' => [
+                '$ref' => $ref
+            ]
+        ]]] = $requestBody;
+        if (!is_string($ref)) {
+            throw new Exception('Creating response body without ref to schema is not supported');
         }
+        $ref = new RefData($ref);
+        $data = $this->fetcher->getContent($ref->path, $openapi);
 
-        $this->logger->error('Generating requestBody without $ref is not supported', [
-            'xpath' => $xpath,
-        ]);
-        return new RequestBodyDefinition($xpath, new ClassType());
+        $class = new ClassType();
+        $class->setName($requestBodyName);
+        return  new ClassDefinitionData(
+            $class,
+            $this->namespaceHelper->getNamespace( self::NAMESPACE),
+            self::NAMESPACE
+        );
     }
 }
