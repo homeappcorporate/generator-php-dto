@@ -1,11 +1,5 @@
 # PHP DTO code generator form OpenAPI spect
 
-## To build and publish image (TODO automate)
-```shell
-docker build . --tag fearofcode/openapi-php-generator
-docker push fearofcode/openapi-php-generator 
-```
-
 ## To set up 
 ```bash
 ./php composer i
