@@ -26,7 +26,11 @@ final class TypeMapper
         $this->logger = $logger;
     }
 
-    public function map(string $type): ?string
+    /**
+     * @param string $type
+     * @return string|null
+     */
+    public function map(string $type):      ?string
     {
         $convertedType = self::TYPE_MAP[$type] ?? null;
         if ($convertedType !== null) {
