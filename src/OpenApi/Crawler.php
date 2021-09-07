@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Homeapp\OpenapiGenerator\OpenApi;
 
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
-use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\RequestBodyExtractor;
-use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\ResponseExtractor;
-use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\SchemaExtractor;
+use Homeapp\OpenapiGenerator\OpenApi\ComponentsExtractors\RequestBodyExtractor;
+use Homeapp\OpenapiGenerator\OpenApi\ComponentsExtractors\ResponseExtractor;
+use Homeapp\OpenapiGenerator\OpenApi\ComponentsExtractors\SchemaExtractor;
 use Psr\Log\LoggerInterface;
 
 class Crawler

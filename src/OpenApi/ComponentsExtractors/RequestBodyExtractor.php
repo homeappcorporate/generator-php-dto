@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
+namespace Homeapp\OpenapiGenerator\OpenApi\ComponentsExtractors;
 
 use Exception;
 use Homeapp\OpenapiGenerator\ArrayPathFetcher;
 use Homeapp\OpenapiGenerator\Deffenition\ClassDefinitionData;
-use Homeapp\OpenapiGenerator\Deffenition\RequestBodyDefinition;
 use Homeapp\OpenapiGenerator\NamespaceHelper;
 use Homeapp\OpenapiGenerator\OpenApi\RefData;
 use Nette\PhpGenerator\ClassType;
