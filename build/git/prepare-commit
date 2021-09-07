@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# Installation: ln -s `pwd`/build/git/prepare-commit .git/hooks/prepare-commit && chmod +x .git/hooks/prepare-commit
-ROOT="$(git rev-parse --show-toplevel)"
-eval "$ROOT/vendor/bin/php-cs-fixer fi"
