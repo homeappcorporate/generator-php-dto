@@ -41,8 +41,8 @@ class RequestBodyExtractor
     {
         ['description' => $description, 'content' => ['application/json' => [
             'schema' => [
-                '$ref' => $ref
-            ]
+                '$ref' => $ref,
+            ],
         ]]] = $requestBody;
         if (!is_string($ref)) {
             throw new Exception('Creating response body without ref to schema is not supported');
@@ -76,7 +76,7 @@ class RequestBodyExtractor
         $class->setName($requestBodyName);
         return  new ClassDefinitionData(
             $class,
-            $this->namespaceHelper->getNamespace( self::NAMESPACE),
+            $this->namespaceHelper->getNamespace(self::NAMESPACE),
             self::NAMESPACE
         );
     }

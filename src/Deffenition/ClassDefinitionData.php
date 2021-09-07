@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator\Deffenition;
 
 use Nette\PhpGenerator\ClassType;
@@ -23,5 +25,4 @@ class ClassDefinitionData
         $this->namespace = $fullNamespace;
         $this->subNamespace = $subNamespace;
     }
-
 }

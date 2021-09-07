@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Homeapp\OpenapiGenerator\Deffenition;
@@ -19,5 +20,4 @@ class RequestBodyDefinition
         $this->xpath = $xpath;
         $this->class = $class;
     }
-
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator;
 
 use Psr\Log\LoggerInterface;
@@ -15,9 +17,9 @@ class ClassDefinitionRegister
 
     private array $map = [];
 
-    public function register(string $xpath, object $class):void
+    public function register(string $xpath, object $class): void
     {
-        if (array_key_exists($xpath, $this->map)){
+        if (array_key_exists($xpath, $this->map)) {
             $this->logger->debug('Class by "path" already registered', [
                 'path' => $xpath,
                 'class' => get_class($class),

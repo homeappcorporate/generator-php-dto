@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator\OpenApi;
 
 use Homeapp\OpenapiGenerator\ClassDefinitionRegister;
@@ -18,7 +20,7 @@ class RefClassGenerator
         $this->register = $register;
     }
 
-    public function generateClassByRef(RefData $ref, array $openapi):ClassDefinitionData
+    public function generateClassByRef(RefData $ref, array $openapi): ClassDefinitionData
     {
         $definition = $this->fetcher->getContent($ref->path, $openapi);
         $class = new ClassType($ref->name);

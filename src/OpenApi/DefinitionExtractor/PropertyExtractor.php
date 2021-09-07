@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor;
 
 use Homeapp\OpenapiGenerator\OpenApi\RefFullClassNameConverter;

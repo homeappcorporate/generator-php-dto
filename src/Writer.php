@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator;
 
 class Writer
 {
-
-    public function write(string $path, string $content):void
+    public function write(string $path, string $content): void
     {
         $this->createDirectoryIfNotExist(dirname($path));
 

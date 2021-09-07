@@ -10,5 +10,4 @@ class OperationNameConverter
     {
         return str_replace('-', '', ucwords($operationId, '-'));
     }
-
 }

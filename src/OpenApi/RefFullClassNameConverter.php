@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator\OpenApi;
 
 use Homeapp\OpenapiGenerator\NamespaceHelper;
@@ -13,7 +15,7 @@ class RefFullClassNameConverter
         $this->namespaceHelper = $namespaceHelper;
     }
 
-    public function convertRefToFullClassName(string $ref):string
+    public function convertRefToFullClassName(string $ref): string
     {
         $rest = substr($ref, strlen('#/components/'));
         $parts = explode('/', $rest);

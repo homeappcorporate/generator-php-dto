@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Test;
 
 use Homeapp\OpenapiGenerator\NamespaceHelper;
@@ -18,7 +20,7 @@ class NamespaceHelperTest extends TestCase
         $this->helper = new NamespaceHelper('Foo');
     }
 
-    public function testGetNamespace():void
+    public function testGetNamespace(): void
     {
         $this->assertSame(
             "Foo\Bar",

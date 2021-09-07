@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Homeapp\OpenapiGenerator\PHP;
 
 use Nette\PhpGenerator\ClassType;
@@ -7,7 +9,6 @@ use Nette\PhpGenerator\Property;
 
 class ConstructorGenerator
 {
-
     /**
      * @param list<Property> $arguments
      */
