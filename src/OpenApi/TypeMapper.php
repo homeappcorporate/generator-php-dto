@@ -30,7 +30,7 @@ final class TypeMapper
      * @param string $type
      * @return string|null
      */
-    public function map(string $type):         ?string
+    public function map(string $type): ?string
     {
         $convertedType = self::TYPE_MAP[$type] ?? null;
         if ($convertedType !== null) {
