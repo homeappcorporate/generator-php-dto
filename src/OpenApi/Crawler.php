@@ -17,6 +17,9 @@ class Crawler
     private ResponseExtractor $responseExtractor;
     private LoggerInterface $logger;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(RequestBodyExtractor $requestBodyExtractor, SchemaExtractor $schemaExtractor, ResponseExtractor $responseExtractor, LoggerInterface $logger)
     {
         $this->requestBodyExtractor = $requestBodyExtractor;
@@ -26,18 +29,22 @@ class Crawler
     }
 
     /**
+     * @psalm-suppress MixedAssignment
      * @psalm-return \Traversable<int, ClassDefinitionData>
      */
     public function walk(array $openapi): \Traversable
     {
         [
-            'paths' => $paths,
             'components' => [
             'responses' => $responses,
             'schemas' => $schemas,
             'requestBodies' => $requestBodies,
         ]] = $openapi;
-
+        /**
+         * @var array<string, array> $requestBodies
+         * @var array<string, array> $responses
+         * @var array<string, array> $schemas
+         */
 
         $this->logger->debug('Extracting definition from components');
         // Components

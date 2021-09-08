@@ -10,7 +10,7 @@ use Nette\PhpGenerator\Property;
 class ConstructorGenerator
 {
     /**
-     * @param list<Property> $arguments
+     * @param array<array-key, Property> $arguments
      */
     public function addContractorWithRequiredArgument(ClassType $class, array $arguments): void
     {

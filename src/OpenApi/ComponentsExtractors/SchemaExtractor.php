@@ -19,6 +19,9 @@ class SchemaExtractor
     private NamespaceHelper $namespaceHelper;
     private PropertyExtractor $propertyExtractor;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor)
     {
         $this->constructorGenerator = $constructorGenerator;
@@ -37,11 +40,19 @@ class SchemaExtractor
             'description' => $description,
             'properties' => $properties
         ] = $schema;
+        /**
+         * @var list<string> $required
+         * @var array<string, array> $properties
+         * @var string|null $description
+         * @var string $type
+         */
         if ($type !== 'object') {
             throw new Exception(sprintf('Type "%s" is not implemented', $type));
         }
         $class = new ClassType($schemaName);
-        $class->addComment($description);
+        if ($description) {
+            $class->addComment($description);
+        }
         $construct = new Method('__construct');
         $construct->setPublic();
         $constructorProperties = [];

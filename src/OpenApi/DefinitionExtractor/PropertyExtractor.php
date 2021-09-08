@@ -13,6 +13,9 @@ class PropertyExtractor
     private RefFullClassNameConverter $refFullClassNameConverter;
     private TypeMapper $typeMapper;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(RefFullClassNameConverter $refFullClassNameConverter, TypeMapper $typeMapper)
     {
         $this->refFullClassNameConverter = $refFullClassNameConverter;
@@ -22,6 +25,11 @@ class PropertyExtractor
     public function extractProperty(string $propertyName, array $propertyStructure): Property
     {
         $property =  new Property($propertyName);
+        /**
+         * @var null|bool $nullable
+         * @var string $type
+         * @var null|string $description
+         */
         ['nullable' => $nullable, 'description' => $description, '$ref' => $ref, 'type' => $type, 'default' => $default] = $propertyStructure;
         $nullable = $nullable ?? false;
         if ($description !== null) {

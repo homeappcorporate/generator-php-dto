@@ -22,31 +22,31 @@ use function sprintf;
 
 class ObjectDefinitionExtractor
 {
-    private TypeMapper $typeMapper;
     private NamespaceHelper $namespaceHelper;
-    private RefFullClassNameConverter $refFullClassNameConverter;
     private ConstructorGenerator $constructorGenerator;
     private PropertyExtractor $propertyExtractor;
 
-    public function __construct(TypeMapper $typeMapper, NamespaceHelper $namespaceHelper, RefFullClassNameConverter $refFullClassNameConverter, ConstructorGenerator $constractorGenerator, PropertyExtractor $propertyExtractor)
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function __construct(NamespaceHelper $namespaceHelper, ConstructorGenerator $constractorGenerator, PropertyExtractor $propertyExtractor)
     {
-        $this->typeMapper = $typeMapper;
         $this->namespaceHelper = $namespaceHelper;
-        $this->refFullClassNameConverter = $refFullClassNameConverter;
         $this->constructorGenerator = $constractorGenerator;
         $this->propertyExtractor = $propertyExtractor;
     }
     /**
+     * @psalm-param array<string, array> $properties
      * @return ClassDefinitionData
      */
-    public function extractClassesDefinition(string $className, string $subNamespace, string $description, array $properties, array $required): ClassDefinitionData
+    public function extractClassesDefinition(string $className, string $subNamespace, ?string $description, array $properties): ClassDefinitionData
     {
-        $requiredMap = array_flip($required);
         $class = new ClassType($className);
-        $class->addComment($description);
+        if ($description !== null) {
+            $class->addComment($description);
+        }
         $construct = new Method('__construct');
         $construct->setPublic();
-        $requiredParameters = [];
         foreach ($properties as $propertyName => $propertyStructure) {
             $property = $this->propertyExtractor->extractProperty($propertyName, $propertyStructure);
             $class->addMember($property);

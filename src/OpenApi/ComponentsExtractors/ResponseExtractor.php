@@ -34,10 +34,13 @@ class ResponseExtractor
             throw new Exception(sprintf('Type "%s" is not implemented', $schema['type']));
         }
         [
-            'required' => $required,
             'properties' => $properties,
         ] = $schema;
+        /**
+         * @var string|null $description
+         * @var array<string, array> $properties
+         */
 
-        return $this->objectDefinitionExtractor->extractClassesDefinition($responseName, 'Responses', $description, $properties, $required);
+        return $this->objectDefinitionExtractor->extractClassesDefinition($responseName, 'Responses', $description, $properties);
     }
 }
