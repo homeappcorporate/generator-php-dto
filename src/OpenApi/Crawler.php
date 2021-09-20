@@ -48,9 +48,11 @@ class Crawler
 
         $this->logger->debug('Extracting definition from components');
         // Components
-        foreach ($schemas as $schemaName => $schema) {
-            yield $this->schemaExtractor->extractSchema($schemaName, $schema);
-        }
+        // Schema should not be generated due to different set of properties for request and responses class
+        // Each request/response/query parameters must have it's on class in it's own namespace
+//        foreach ($schemas as $schemaName => $schema) {
+//            yield $this->schemaExtractor->extractSchema($schemaName, $schema);
+//        }
 
         foreach ($responses as $responseName => $responseStructure) {
             yield $this->responseExtractor->extractResponse($responseName, $responseStructure);

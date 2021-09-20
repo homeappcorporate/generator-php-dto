@@ -11,6 +11,7 @@ use Homeapp\OpenapiGenerator\OpenApi\DefinitionExtractor\PropertyExtractor;
 use Homeapp\OpenapiGenerator\PHP\ConstructorGenerator;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
+use Nette\PhpGenerator\Property;
 
 class SchemaExtractor
 {
@@ -22,7 +23,7 @@ class SchemaExtractor
     /**
      * @psalm-suppress PossiblyUnusedMethod
      */
-    public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor)
+    public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor, )
     {
         $this->constructorGenerator = $constructorGenerator;
         $this->namespaceHelper = $namespaceHelper;
@@ -38,7 +39,8 @@ class SchemaExtractor
             'type' => $type,
             'required' => $required,
             'description' => $description,
-            'properties' => $properties
+            'properties' => $properties,
+            'allOf' => $allOf,
         ] = $schema;
         /**
          * @var list<string> $required
@@ -46,10 +48,20 @@ class SchemaExtractor
          * @var string|null $description
          * @var string $type
          */
+        $class = new ClassType($schemaName);
         if ($type !== 'object') {
+            if (is_array($allOf) && count($allOf) > 0) {
+                foreach ($allOf as $subSchema) {
+                    /** @var Property $property */
+                    foreach ($this->extractProperties($subSchema) as $property) {
+                        $class->setProperties()
+                    }
+                }
+            }
+
             throw new Exception(sprintf('Type "%s" is not implemented. Schema name: %s', $type, $schemaName));
         }
-        $class = new ClassType($schemaName);
+
         if ($description) {
             $class->addComment($description);
         }
@@ -67,5 +79,21 @@ class SchemaExtractor
             $this->constructorGenerator->addContractorWithRequiredArgument($class, $constructorProperties);
         }
         return new ClassDefinitionData($class, $this->namespaceHelper->getNamespace(self::SUB_NAMESPACE), self::SUB_NAMESPACE);
+    }
+
+    /**
+     * @param Property[] $subSchema
+     * @throws Exception
+     */
+    private function extractProperties(array $subSchema): \Generator
+    {
+        ['type' => $type, 'properties' => $properties] = $subSchema;
+        if ($type !== 'object') {
+            throw new Exception(sprintf('SubType. Type "%s" is not implemented.', $type));
+        }
+        new ClassType();
+        foreach ($properties as $propertyName => $propertyStructure) {
+            yield $this->propertyExtractor->extractProperty( $propertyName, $propertyStructure);
+        }
     }
 }
