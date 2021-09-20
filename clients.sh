@@ -1,2 +1,2 @@
 docker run --rm -v /home/max/ha/clients/:/tmp/output -v $(pwd)/:/tmp/generator/ swaggerapi/swagger-codegen-cli-v3 generate -l openapi-yaml -i /tmp/output/docs/v1.yaml -o /tmp/generator -DoutputFile=compiled.yaml
-docker run --rm -it -v $(pwd)/:/home/max/ha/generator -v /home/max/ha/clients/generated/:/home/max/ha/clients/generated -w /home/max/ha/generator/ php:7.4-cli-alpine3.13 "./bin/generator" create-dto -vvv  ./compiled.yaml /home/max/ha/clients/generated
+docker run --rm -it -v $(pwd)/:/home/max/ha/generator -v /home/max/ha/clients/generated/:/home/max/ha/clients/generated -w /home/max/ha/generator/ php:7.4-cli-alpine3.13 "./bin/generator" create-dto -vvv  ./compiled.yaml /home/max/ha/clients/generated/app --namespace --namespace=Generated\\App
