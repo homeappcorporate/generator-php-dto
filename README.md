@@ -25,3 +25,11 @@
 - [ ] SDK client generation
 - [ ] Image tag generation automation
 - [ ] Extention for codeception (in separate repository)
+
+
+
+## Run for project
+Clients
+```shell
+./clients.sh                                                                                                                                                          
+```

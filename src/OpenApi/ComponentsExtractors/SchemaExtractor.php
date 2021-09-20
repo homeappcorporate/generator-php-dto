@@ -47,7 +47,7 @@ class SchemaExtractor
          * @var string $type
          */
         if ($type !== 'object') {
-            throw new Exception(sprintf('Type "%s" is not implemented', $type));
+            throw new Exception(sprintf('Type "%s" is not implemented. Schema name: %s', $type, $schemaName));
         }
         $class = new ClassType($schemaName);
         if ($description) {
