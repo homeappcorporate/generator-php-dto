@@ -65,7 +65,7 @@ final class CreateDTO extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Namespace what all generated classes will have',
-                'Generated\\'
+                'Generated'
             );
     }
 

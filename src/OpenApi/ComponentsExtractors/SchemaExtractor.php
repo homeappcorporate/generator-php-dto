@@ -23,7 +23,7 @@ class SchemaExtractor
     /**
      * @psalm-suppress PossiblyUnusedMethod
      */
-    public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor, )
+    public function __construct(ConstructorGenerator $constructorGenerator, NamespaceHelper $namespaceHelper, PropertyExtractor $propertyExtractor )
     {
         $this->constructorGenerator = $constructorGenerator;
         $this->namespaceHelper = $namespaceHelper;
@@ -54,7 +54,7 @@ class SchemaExtractor
                 foreach ($allOf as $subSchema) {
                     /** @var Property $property */
                     foreach ($this->extractProperties($subSchema) as $property) {
-                        $class->setProperties()
+//                        $class->setProperties()
                     }
                 }
             }
