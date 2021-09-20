@@ -29,6 +29,9 @@ class ResponseClassExtractor
     /** @throws Exception */
     public function extractResponseClass(int $code, $operationId, array $response, array $openapi):ClassDefinitionData
     {
+        $this->logger->debug('Trying to generated response', [
+            'response' => $response
+        ]);
         $class = new ClassType(
             $this->generateClassName($code, $operationId)
         );
@@ -38,14 +41,21 @@ class ResponseClassExtractor
             $this->namespaceHelper->getNamespace('Responses'),
             'Responses'
         );
+
         ['content' => ['application/json' => ['schema' => [
             'type' => $type,
+            'description' => $description,
             '$ref' => $ref,
             'properties' => $properties,
         ]]]] = $response;
-        $this->logger->debug('Trying to generated response', [
-            'response' => $response
-        ]);
+        if ($description !== null) {
+            $class->addComment($description);
+        }
+        if (!array_key_exists('content', $response)){
+            $this->logger->debug('empty response');
+            return $definition;
+        }
+
         if ($type === 'object') {
             $this->logger->debug('Generating from plain object');
 
